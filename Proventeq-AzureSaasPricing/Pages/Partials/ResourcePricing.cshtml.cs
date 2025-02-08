@@ -6,7 +6,7 @@ namespace Proventeq_AzureSaasPricing.Pages
 {
     [ResponseCache(Duration = 0, Location = ResponseCacheLocation.None, NoStore = true)]
     [IgnoreAntiforgeryToken]
-    public class StaticWebAppModel : PageModel
+    public class ResourcePricingModel : PageModel
     {
         public string? RequestId { get; set; }
 
@@ -14,7 +14,7 @@ namespace Proventeq_AzureSaasPricing.Pages
 
         private readonly ILogger<ErrorModel> _logger;
 
-        public StaticWebAppModel(ILogger<ErrorModel> logger)
+        public ResourcePricingModel(ILogger<ErrorModel> logger)
         {
             _logger = logger;
         }
