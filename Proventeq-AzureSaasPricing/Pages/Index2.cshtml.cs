@@ -3,11 +3,11 @@ using Microsoft.AspNetCore.Mvc.RazorPages;
 
 namespace Proventeq_AzureSaasPricing.Pages
 {
-    public class IndexModel : PageModel
+    public class Index2Model : PageModel
     {
         private readonly ILogger<IndexModel> _logger;
 
-        public IndexModel(ILogger<IndexModel> logger)
+        public Index2Model(ILogger<IndexModel> logger)
         {
             _logger = logger;
         }
