@@ -5,45 +5,98 @@
 }
 
 <h4>SaaS Type</h4>
-<ul class="nav nav-tabs">
-    <li class="nav-item"><a class="nav-link active" aria-current="page" href="#">Self Hosted</a></li>
-    <li class="nav-item"><a class="nav-link">Dedicated Infrastructure</a></li>
-    <li class="nav-item"><a class="nav-link">Shared  Infrastructure</a></li>
+<ul class="nav nav-tabs" id="saasTypeTabs">
+    <li class="nav-item">
+        <a class="nav-link active" data-tab="selfHosted" href="#">Self Hosted</a>
+    </li>
+    <li class="nav-item">
+        <a class="nav-link" data-tab="dedicated" href="#">Dedicated Infrastructure</a>
+    </li>
+    <li class="nav-item">
+        <a class="nav-link" data-tab="shared" href="#">Shared Infrastructure</a>
+    </li>
 </ul>
 
-
-<div class="text-center">
-    <div class="modal-body row">
-        <div class="col-md-6">
-            <table class="table table-primary table-striped table-hover">
-                <thead>
-                    <tr>
-                        <th>Name</th>
-                        <th>City</th>
-                        <th>Salary</th>
-                    </tr>
-                </thead>
-                <tbody>
-                    <tr>
-                        <td>Max Payne</td>
-                        <td> New York</td>
-                        <td> $250000</td>
-                    </tr>
-                    <tr>
-                        <td>Harun</td>
-                        <td>Jakarta</td>
-                        <td>$125000</td>
-                    </tr>
-                    <tr>
-                        <td>Suresh</td>
-                        <td>Chennai</td>
-                        <td>$115000</td>
-                    </tr>
-                </tbody>
-            </table>
+<div class="tab-content mt-3">
+    <div class="tab-pane fade show active" id="selfHosted">
+        <div class="text-center">
+            <div class="modal-body row">
+                <div class="col-md-6">
+                    <table class="table table-primary table-striped table-hover">
+                        <thead>
+                            <tr>
+                                <th>Name</th>
+                                <th>City</th>
+                                <th>Salary</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr>
+                                <td>Max Payne</td>
+                                <td> New York</td>
+                                <td> $250000</td>
+                            </tr>
+                            <tr>
+                                <td>Harun</td>
+                                <td>Jakarta</td>
+                                <td>$125000</td>
+                            </tr>
+                            <tr>
+                                <td>Suresh</td>
+                                <td>Chennai</td>
+                                <td>$115000</td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+                <div class="col-md-6">
+                    <img src="~/img/PricingWidget.png" />
+                </div>
+            </div>
         </div>
-        <div class="col-md-6">
-            <img src="~/img/PricingWidget.png" />
+    </div>
+    
+    <div class="tab-pane fade" id="dedicated">
+        <div class="text-center">
+            <h5>Dedicated Infrastructure Content</h5>
+            <!-- Add your dedicated infrastructure content here -->
+        </div>
+    </div>
+    
+    <div class="tab-pane fade" id="shared">
+        <div class="text-center">
+            <h5>Shared Infrastructure Content</h5>
+            <!-- Add your shared infrastructure content here -->
         </div>
     </div>
 </div>
+
+@section Scripts {
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            const tabLinks = document.querySelectorAll('#saasTypeTabs .nav-link');
+            
+            tabLinks.forEach(link => {
+                link.addEventListener('click', function(e) {
+                    e.preventDefault();
+                    
+                    // Remove active class from all tabs and content
+                    tabLinks.forEach(tab => {
+                        tab.classList.remove('active');
+                    });
+                    document.querySelectorAll('.tab-pane').forEach(pane => {
+                        pane.classList.remove('show', 'active');
+                    });
+                    
+                    // Add active class to clicked tab
+                    this.classList.add('active');
+                    
+                    // Show corresponding content
+                    const tabId = this.getAttribute('data-tab');
+                    const tabContent = document.getElementById(tabId);
+                    tabContent.classList.add('show', 'active');
+                });
+            });
+        });
+    </script>
+}
