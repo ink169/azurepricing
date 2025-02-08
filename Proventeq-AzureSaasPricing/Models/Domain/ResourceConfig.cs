@@ -3,6 +3,8 @@
     public class ResourceConfig
     {
         public string ResourceName { get; set; }
+
+        public ResourceType ResourceType { get; set; }
         public Tier Tier { get; set; }
 
         public Decimal Cost { get; set; }
