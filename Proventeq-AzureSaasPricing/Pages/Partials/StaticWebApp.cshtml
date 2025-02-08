@@ -33,7 +33,7 @@
                     <label for="bandwidth" class="form-label">Bandwidth</label>
                     <div class="input-group">
                         <input type="number" class="form-control" id="bandwidth" min="0" value="0">
-                        <select class="form-select" style="max-width: 80px;">
+                        <select class="form-select" id="bandwidthUnit" style="max-width: 80px;">
                             <option value="GB">GB</option>
                             <option value="TB">TB</option>
                         </select>
@@ -52,44 +52,6 @@
         </div>
     </div>
 </div>
-
-<script>
-    document.addEventListener('DOMContentLoaded', function() {
-        const form = document.getElementById('staticWebAppForm');
-        const inputs = form.querySelectorAll('input, select');
-        
-        const calculatePrice = () => {
-            const tier = document.getElementById('tier').value;
-            const appCount = parseInt(document.getElementById('appCount').value) || 0;
-            const bandwidth = parseInt(document.getElementById('bandwidth').value) || 0;
-            
-            // Base app pricing
-            const appCost = tier === 'free' ? 0 : appCount * 9;
-            
-            // Bandwidth pricing (free tier includes 100GB, standard tier includes 100GB per subscription)
-            let bandwidthCost = 0;
-            if (tier === 'standard' && bandwidth > 100) {
-                bandwidthCost = (bandwidth - 100) * 0.20; // $0.20 per GB over 100GB
-            }
-            
-            const total = appCost + bandwidthCost;
-            
-            // Update display
-            document.getElementById('appCost').textContent = `US$${appCost.toFixed(2)}`;
-            document.getElementById('bandwidthCost').textContent = `US$${bandwidthCost.toFixed(2)}`;
-            document.getElementById('totalCost').textContent = `US$${total.toFixed(2)}`;
-        };
-        
-        // Calculate initial price
-        calculatePrice();
-        
-        // Add event listeners to all inputs
-        inputs.forEach(input => {
-            input.addEventListener('change', calculatePrice);
-            input.addEventListener('input', calculatePrice);
-        });
-    });
-</script>
 
 <style>
     .info-text {

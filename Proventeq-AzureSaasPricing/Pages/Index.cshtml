@@ -78,7 +78,124 @@
 </div>
 
 @section Scripts {
+    <!-- Add the initialization functions from both partials -->
     <script>
+        function initializeStaticWebAppForm() {
+            const form = document.getElementById('staticWebAppForm');
+            if (!form) return; // Exit if form doesn't exist
+            const inputs = form.querySelectorAll('input, select');
+            
+            const calculatePrice = () => {
+                const tier = document.getElementById('tier').value;
+                const appCount = parseInt(document.getElementById('appCount').value) || 0;
+                const bandwidth = parseInt(document.getElementById('bandwidth').value) || 0;
+                const bandwidthUnit = document.getElementById('bandwidthUnit').value;
+                
+                // Convert bandwidth to GB if TB is selected
+                const bandwidthInGB = bandwidthUnit === 'TB' ? bandwidth * 1024 : bandwidth;
+                
+                // Base app pricing
+                const appCost = tier === 'free' ? 0 : appCount * 9;
+                
+                // Bandwidth pricing (free tier includes 100GB, standard tier includes 100GB per subscription)
+                let bandwidthCost = 0;
+                if (tier === 'standard' && bandwidthInGB > 100) {
+                    bandwidthCost = (bandwidthInGB - 100) * 0.20; // $0.20 per GB over 100GB
+                }
+                
+                const total = appCost + bandwidthCost;
+                
+                // Update display
+                document.getElementById('appCost').textContent = `US$${appCost.toFixed(2)}`;
+                document.getElementById('bandwidthCost').textContent = `US$${bandwidthCost.toFixed(2)}`;
+                document.getElementById('totalCost').textContent = `US$${total.toFixed(2)}`;
+            };
+            
+            // Calculate initial price
+            calculatePrice();
+            
+            // Remove existing event listeners (if any) and add new ones
+            inputs.forEach(input => {
+                input.removeEventListener('change', calculatePrice);
+                input.removeEventListener('input', calculatePrice);
+                input.addEventListener('change', calculatePrice);
+                input.addEventListener('input', calculatePrice);
+            });
+        }
+
+        function initializeApplicationGatewayForm() {
+            const form = document.getElementById('appGatewayForm');
+            if (!form) return; // Exit if form doesn't exist
+            const inputs = form.querySelectorAll('input, select');
+            
+            const calculatePrice = () => {
+                const instances = parseInt(document.getElementById('instances').value) || 0;
+                const hours = parseInt(document.getElementById('hours').value) || 0;
+                const dataProcessed = parseInt(document.getElementById('dataProcessed').value) || 0;
+                const dataProcessedUnit = document.getElementById('dataProcessedUnit').value;
+                const outboundData = parseInt(document.getElementById('outboundData').value) || 0;
+                const outboundDataUnit = document.getElementById('outboundDataUnit').value;
+                const timeUnit = document.getElementById('timeUnit').value;
+                
+                // Convert data to GB if TB is selected
+                const dataProcessedInGB = dataProcessedUnit === 'TB' ? dataProcessed * 1024 : dataProcessed;
+                const outboundDataInGB = outboundDataUnit === 'TB' ? outboundData * 1024 : outboundData;
+                
+                // Convert hours based on time unit
+                let totalHours = hours;
+                switch(timeUnit) {
+                    case 'days':
+                        totalHours = hours * 24;
+                        break;
+                    case 'month':
+                        totalHours = hours * 730; // Average hours in a month
+                        break;
+                }
+                
+                // Calculate costs
+                const hourlyRate = 0.095; // $0.095 per gateway hour
+                const dataProcessingRate = 0.016; // $0.016 per GB processed
+                const outboundDataRate = 0.087; // $0.087 per GB transferred
+                
+                const gatewayCost = instances * totalHours * hourlyRate;
+                const dataProcessingCost = dataProcessedInGB * dataProcessingRate;
+                const outboundCost = outboundDataInGB * outboundDataRate;
+                
+                const totalMonthlyCost = gatewayCost + dataProcessingCost + outboundCost;
+                
+                // Update display
+                document.getElementById('gatewayHoursCost').textContent = `$${gatewayCost.toFixed(2)}`;
+                document.getElementById('dataProcessedCost').textContent = `$${dataProcessingCost.toFixed(2)}`;
+                document.getElementById('outboundDataCost').textContent = `$${outboundCost.toFixed(2)}`;
+                document.getElementById('upfrontCost').textContent = `$0.00`;
+                document.getElementById('monthlyCost').textContent = `$${totalMonthlyCost.toFixed(2)}`;
+            };
+            
+            // Calculate initial price
+            calculatePrice();
+            
+            // Remove existing event listeners (if any) and add new ones
+            inputs.forEach(input => {
+                input.removeEventListener('change', calculatePrice);
+                input.removeEventListener('input', calculatePrice);
+                input.addEventListener('change', calculatePrice);
+                input.addEventListener('input', calculatePrice);
+            });
+        }
+    </script>
+
+    <!-- The main script we modified above -->
+    <script>
+        // Define global initialization functions first
+        function initializeAllForms() {
+            if (typeof initializeStaticWebAppForm === 'function') {
+                initializeStaticWebAppForm();
+            }
+            if (typeof initializeApplicationGatewayForm === 'function') {
+                initializeApplicationGatewayForm();
+            }
+        }
+
         document.addEventListener('DOMContentLoaded', function() {
             const tabLinks = document.querySelectorAll('#saasTypeTabs .nav-link');
             
@@ -104,6 +221,9 @@
                 });
             });
 
+            // Initialize all forms on page load
+            initializeAllForms();
+
             // Updated table row click handler
             const tableRows = document.querySelectorAll('table tbody tr');
             const rightColumn = document.querySelector('.col-md-6:last-child');
@@ -113,13 +233,15 @@
                     const partialName = this.getAttribute('data-partial');
                     if (partialName) {
                         try {
-                            rightColumn.innerHTML = await fetch(`?handler=LoadPartial&partialName=${partialName}`)
-                                .then(response => {
-                                    if (!response.ok) {
-                                        throw new Error(`HTTP error! status: ${response.status}`);
-                                    }
-                                    return response.text();
-                                });
+                            const response = await fetch(`?handler=LoadPartial&partialName=${partialName}`);
+                            if (!response.ok) {
+                                throw new Error(`HTTP error! status: ${response.status}`);
+                            }
+                            const html = await response.text();
+                            rightColumn.innerHTML = html;
+                            
+                            // Initialize all forms after loading new partial
+                            setTimeout(initializeAllForms, 0);
                         } catch (error) {
                             console.error('Error loading partial:', error);
                         }
