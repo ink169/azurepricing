@@ -1,0 +1,108 @@
+<div class="pricing-calculator">
+    <div class="card">
+        <div class="card-header">
+            <h5 class="mb-0">Static Web Apps</h5>
+        </div>
+        <div class="card-body">
+            <form id="staticWebAppForm">
+                <div class="mb-3">
+                    <label for="tier" class="form-label">Tier:</label>
+                    <select class="form-select" id="tier">
+                        <option value="free">Free</option>
+                        <option value="standard" selected>Standard</option>
+                    </select>
+                </div>
+
+                <div class="info-text mb-3">
+                    <i class="bi bi-info-circle"></i>
+                    <small class="text-muted">The standard tier includes 100 GB of bandwidth per subscription and 2 GB of storage per app.</small>
+                </div>
+
+                <div class="mb-3">
+                    <label for="appCount" class="form-label">App</label>
+                    <div class="input-group">
+                        <input type="number" class="form-control" id="appCount" min="1" value="1">
+                        <span class="input-group-text">× US$9.00</span>
+                        <span class="input-group-text">=</span>
+                        <span class="input-group-text" id="appCost">US$9.00</span>
+                    </div>
+                    <small class="text-muted">Per app</small>
+                </div>
+
+                <div class="mb-3">
+                    <label for="bandwidth" class="form-label">Bandwidth</label>
+                    <div class="input-group">
+                        <input type="number" class="form-control" id="bandwidth" min="0" value="0">
+                        <select class="form-select" style="max-width: 80px;">
+                            <option value="GB">GB</option>
+                        </select>
+                        <span class="input-group-text">=</span>
+                        <span class="input-group-text" id="bandwidthCost">US$0.00</span>
+                    </div>
+                </div>
+
+                <div class="total-section mt-4">
+                    <div class="d-flex justify-content-between align-items-center">
+                        <strong>Total:</strong>
+                        <strong id="totalCost">US$9.00</strong>
+                    </div>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+
+<script>
+    document.addEventListener('DOMContentLoaded', function() {
+        const form = document.getElementById('staticWebAppForm');
+        const inputs = form.querySelectorAll('input, select');
+        
+        const calculatePrice = () => {
+            const tier = document.getElementById('tier').value;
+            const appCount = parseInt(document.getElementById('appCount').value) || 0;
+            const bandwidth = parseInt(document.getElementById('bandwidth').value) || 0;
+            
+            // Base app pricing
+            const appCost = tier === 'free' ? 0 : appCount * 9;
+            
+            // Bandwidth pricing (free tier includes 100GB, standard tier includes 100GB per subscription)
+            let bandwidthCost = 0;
+            if (tier === 'standard' && bandwidth > 100) {
+                bandwidthCost = (bandwidth - 100) * 0.20; // $0.20 per GB over 100GB
+            }
+            
+            const total = appCost + bandwidthCost;
+            
+            // Update display
+            document.getElementById('appCost').textContent = `US$${appCost.toFixed(2)}`;
+            document.getElementById('bandwidthCost').textContent = `US$${bandwidthCost.toFixed(2)}`;
+            document.getElementById('totalCost').textContent = `US$${total.toFixed(2)}`;
+        };
+        
+        // Calculate initial price
+        calculatePrice();
+        
+        // Add event listeners to all inputs
+        inputs.forEach(input => {
+            input.addEventListener('change', calculatePrice);
+            input.addEventListener('input', calculatePrice);
+        });
+    });
+</script>
+
+<style>
+    .info-text {
+        background-color: #f8f9fa;
+        padding: 10px;
+        border-radius: 4px;
+    }
+    
+    .bi-info-circle {
+        color: #0066cc;
+        margin-right: 5px;
+    }
+    
+    .input-group-text {
+        background-color: #f8f9fa;
+    }
+</style> 
