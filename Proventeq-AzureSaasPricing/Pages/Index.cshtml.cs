@@ -16,5 +16,16 @@ namespace Proventeq_AzureSaasPricing.Pages
         {
 
         }
+
+        public IActionResult OnGetLoadPartial(string partialName)
+        {
+            return partialName switch
+            {
+                "StaticWebApp" => Partial("Partials/StaticWebApp"),
+                "ApplicationGateway" => Partial("Partials/ApplicationGateway"),
+                "ResourcePricing" => Partial("Partials/ResourcePricing"),
+                _ => NotFound()
+            };
+        }
     }
 }

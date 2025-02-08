@@ -25,32 +25,38 @@
                     <table class="table table-primary table-striped table-hover">
                         <thead>
                             <tr>
-                                <th>Name</th>
-                                <th>City</th>
-                                <th>Salary</th>
+                                <th>Component</th>
+                                <th>Description</th>
+                                <th>Price</th>
                             </tr>
+
                         </thead>
                         <tbody>
-                            <tr>
-                                <td>Max Payne</td>
-                                <td> New York</td>
-                                <td> $250000</td>
+                            <tr data-partial="StaticWebApp" style="cursor: pointer;">
+                                <td>Static Web App</td>
+                                <td>Placeholder Description.</td>
+                                <td>$0.00</td>
                             </tr>
-                            <tr>
-                                <td>Harun</td>
-                                <td>Jakarta</td>
-                                <td>$125000</td>
+                            <tr data-partial="ApplicationGateway" style="cursor: pointer;">
+
+
+                                <td>Application Gateway</td>
+                                <td>Placeholder Description.</td>
+                                <td>$0.00</td>
                             </tr>
-                            <tr>
-                                <td>Suresh</td>
-                                <td>Chennai</td>
-                                <td>$115000</td>
+
+
+                            <tr data-partial="ResourcePricing" style="cursor: pointer;">
+                                <td>Resource Pricing</td>
+                                <td>Placeholder Description.</td>
+                                <td>$0.00</td>
+
                             </tr>
                         </tbody>
                     </table>
                 </div>
                 <div class="col-md-6">
-                    <partial name="Partials/_StaticWebApp" />
+                    <partial name="Partials/StaticWebApp" />
                 </div>
             </div>
         </div>
@@ -95,6 +101,29 @@
                     const tabId = this.getAttribute('data-tab');
                     const tabContent = document.getElementById(tabId);
                     tabContent.classList.add('show', 'active');
+                });
+            });
+
+            // Updated table row click handler
+            const tableRows = document.querySelectorAll('table tbody tr');
+            const rightColumn = document.querySelector('.col-md-6:last-child');
+
+            tableRows.forEach(row => {
+                row.addEventListener('click', async function() {
+                    const partialName = this.getAttribute('data-partial');
+                    if (partialName) {
+                        try {
+                            rightColumn.innerHTML = await fetch(`?handler=LoadPartial&partialName=${partialName}`)
+                                .then(response => {
+                                    if (!response.ok) {
+                                        throw new Error(`HTTP error! status: ${response.status}`);
+                                    }
+                                    return response.text();
+                                });
+                        } catch (error) {
+                            console.error('Error loading partial:', error);
+                        }
+                    }
                 });
             });
         });

@@ -1,0 +1,157 @@
+<div class="pricing-calculator">
+    <div class="card">
+        <div class="card-header">
+            <h5 class="mb-0">Application Gateway</h5>
+        </div>
+        <div class="card-body">
+            <form id="appGatewayForm">
+                <div class="row mb-3">
+                    <div class="col-md-4">
+                        <label for="region" class="form-label">Region:</label>
+                        <select class="form-select" id="region">
+                            <option value="eastus" selected>East US</option>
+                            <option value="westus">West US</option>
+                            <option value="centralus">Central US</option>
+                        </select>
+                    </div>
+                    <div class="col-md-4">
+                        <label for="tier" class="form-label">Tier:</label>
+                        <select class="form-select" id="tier">
+                            <option value="basic" selected>Basic</option>
+                            <option value="standard">Standard</option>
+                            <option value="waf">WAF</option>
+                        </select>
+                    </div>
+                    <div class="col-md-4">
+                        <label for="size" class="form-label">Size:</label>
+                        <select class="form-select" id="size">
+                            <option value="small" selected>Small</option>
+                            <option value="medium">Medium</option>
+                            <option value="large">Large</option>
+                        </select>
+                    </div>
+                </div>
+
+                <div class="mb-3">
+                    <label class="form-label">Gateway hours</label>
+                    <div class="input-group">
+                        <input type="number" class="form-control" id="instances" min="0" value="0">
+                        <span class="input-group-text">×</span>
+                        <input type="number" class="form-control" id="hours" min="0" value="730">
+                        <select class="form-select" id="timeUnit" style="max-width: 120px;">
+                            <option value="hours" selected>Hours</option>
+                            <option value="days">Days</option>
+                            <option value="month">Month</option>
+                        </select>
+                        <span class="input-group-text">=</span>
+                        <span class="input-group-text" id="gatewayHoursCost">$0.00</span>
+                    </div>
+                    <small class="text-muted">Instances</small>
+                </div>
+
+                <div class="mb-3">
+                    <label class="form-label">Data processed</label>
+                    <div class="input-group">
+                        <input type="number" class="form-control" id="dataProcessed" min="0" value="0">
+                        <select class="form-select" style="max-width: 80px;">
+                            <option value="GB" selected>GB</option>
+                        </select>
+                        <span class="input-group-text">=</span>
+                        <span class="input-group-text" id="dataProcessedCost">$0.00</span>
+                    </div>
+                </div>
+
+                <div class="mb-3">
+                    <label class="form-label">Outbound Data Transfer</label>
+                    <div class="input-group">
+                        <span class="input-group-text"><i class="bi bi-truck"></i></span>
+                        <input type="number" class="form-control" id="outboundData" min="0" value="0">
+                        <select class="form-select" style="max-width: 80px;">
+                            <option value="GB" selected>GB</option>
+                        </select>
+                        <span class="input-group-text">=</span>
+                        <span class="input-group-text" id="outboundDataCost">$0.00</span>
+                    </div>
+                </div>
+
+                <div class="pricing-result mt-4">
+                    <div class="d-flex justify-content-between align-items-center mb-2">
+                        <span>Upfront cost</span>
+                        <span id="upfrontCost">$0.00</span>
+                    </div>
+                    <div class="d-flex justify-content-between align-items-center">
+                        <strong>Monthly cost</strong>
+                        <strong id="monthlyCost">$0.00</strong>
+                    </div>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+
+<script>
+    document.addEventListener('DOMContentLoaded', function() {
+        const form = document.getElementById('appGatewayForm');
+        const inputs = form.querySelectorAll('input, select');
+        
+        const calculatePrice = () => {
+            const instances = parseInt(document.getElementById('instances').value) || 0;
+            const hours = parseInt(document.getElementById('hours').value) || 0;
+            const dataProcessed = parseInt(document.getElementById('dataProcessed').value) || 0;
+            const outboundData = parseInt(document.getElementById('outboundData').value) || 0;
+            const timeUnit = document.getElementById('timeUnit').value;
+            
+            // Convert hours based on time unit
+            let totalHours = hours;
+            switch(timeUnit) {
+                case 'days':
+                    totalHours = hours * 24;
+                    break;
+                case 'month':
+                    totalHours = hours * 730; // Average hours in a month
+                    break;
+            }
+            
+            // Calculate costs (example rates - adjust as needed)
+            const hourlyRate = 0.095; // $0.095 per gateway hour
+            const dataProcessingRate = 0.016; // $0.016 per GB processed
+            const outboundDataRate = 0.087; // $0.087 per GB transferred
+            
+            const gatewayCost = instances * totalHours * hourlyRate;
+            const dataProcessingCost = dataProcessed * dataProcessingRate;
+            const outboundCost = outboundData * outboundDataRate;
+            
+            const totalMonthlyCost = gatewayCost + dataProcessingCost + outboundCost;
+            
+            // Update display
+            document.getElementById('gatewayHoursCost').textContent = `$${gatewayCost.toFixed(2)}`;
+            document.getElementById('dataProcessedCost').textContent = `$${dataProcessingCost.toFixed(2)}`;
+            document.getElementById('outboundDataCost').textContent = `$${outboundCost.toFixed(2)}`;
+            document.getElementById('upfrontCost').textContent = `$0.00`;
+            document.getElementById('monthlyCost').textContent = `$${totalMonthlyCost.toFixed(2)}`;
+        };
+        
+        // Calculate initial price
+        calculatePrice();
+        
+        // Add event listeners to all inputs
+        inputs.forEach(input => {
+            input.addEventListener('change', calculatePrice);
+            input.addEventListener('input', calculatePrice);
+        });
+    });
+</script>
+
+<style>
+    .input-group-text {
+        background-color: #f8f9fa;
+    }
+    
+    .bi-truck {
+        font-size: 1.2rem;
+    }
+    
+    .form-select {
+        min-width: 100px;
+    }
+</style> 
