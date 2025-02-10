@@ -64,6 +64,102 @@
             </div>
         </div>
     </div>
+
+    <div class="tab-pane fade" id="archiver">
+        <div class="text-center">
+            <div class="modal-body row">
+                <div class="col-md-6">
+                    <table class="table table-primary table-striped table-hover">
+                        <thead>
+                            <tr>
+                                <th>Azure Resource</th>
+                                <th>Description</th>
+                                <th>Price</th>
+                            </tr>
+
+                        </thead>
+                        <tbody>
+                            <tr data-partial="StaticWebApp" style="cursor: pointer;">
+                                <td>Static Web App</td>
+                                <td>Microsoft Hosted Static Web Site </td>
+                                <td>$0.00</td>
+                            </tr>
+                            <tr data-partial="ApplicationGateway" style="cursor: pointer;">
+                                <td>Application Gateway v2 with Firewall</td>
+                                <td>Layer 7 Loadbalancer with DDoS protection</td>
+                                <td>$0.00</td>
+                            </tr>
+
+                            <tr data-partial="ApplicationInsights" style="cursor: pointer;">
+                                <td>Application Insights</td>
+                                <td>Part of the Azure Monitor Suite of Services</td>
+                                <td>$0.00</td>
+                            </tr>
+
+                        </tbody>
+                        <tfoot>
+                            <tr class="table-dark">
+                                <td colspan="2"><strong>Total Monthly Cost</strong></td>
+                                <td id="totalCost">$0.00</td>
+                            </tr>
+                        </tfoot>
+                    </table>
+                </div>
+                <div class="col-md-6">
+                    <partial name="Partials/StaticWebApp" />
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="tab-pane fade" id="provisioning">
+        <div class="text-center">
+            <div class="modal-body row">
+                <div class="col-md-6">
+                    <table class="table table-primary table-striped table-hover">
+                        <thead>
+                            <tr>
+                                <th>Azure Resource</th>
+                                <th>Description</th>
+                                <th>Price</th>
+                            </tr>
+
+                        </thead>
+                        <tbody>
+                            <tr data-partial="StaticWebApp" style="cursor: pointer;">
+                                <td>Static Web App</td>
+                                <td>Microsoft Hosted Static Web Site </td>
+                                <td>$0.00</td>
+                            </tr>
+                            <tr data-partial="ApplicationGateway" style="cursor: pointer;">
+                                <td>Application Gateway v2 with Firewall</td>
+                                <td>Layer 7 Loadbalancer with DDoS protection</td>
+                                <td>$0.00</td>
+                            </tr>
+
+                            <tr data-partial="ApplicationInsights" style="cursor: pointer;">
+                                <td>Application Insights</td>
+                                <td>Part of the Azure Monitor Suite of Services</td>
+                                <td>$0.00</td>
+                            </tr>
+
+                        </tbody>
+                        <tfoot>
+                            <tr class="table-dark">
+                                <td colspan="2"><strong>Total Monthly Cost</strong></td>
+                                <td id="totalCost">$0.00</td>
+                            </tr>
+                        </tfoot>
+                    </table>
+                </div>
+                <div class="col-md-6">
+                    <partial name="Partials/StaticWebApp" />
+                </div>
+            </div>
+
+        </div>
+    </div>
+
 </div>
 
 @section Scripts {
@@ -236,6 +332,7 @@
                     document.querySelectorAll('.tab-pane').forEach(pane => pane.classList.remove('show', 'active'));
                     this.classList.add('active');
                     const tabId = this.getAttribute('data-tab');
+                    console.log(tabId);
                     const tabContent = document.getElementById(tabId);
                     if (tabContent) tabContent.classList.add('show', 'active');
                 });
