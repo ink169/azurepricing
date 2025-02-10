@@ -7,18 +7,18 @@
 <h4>SaaS Solution</h4>
 <ul class="nav nav-tabs" id="systemTypeTabs">
     <li class="nav-item">
-        <a class="nav-link active" data-tab="governance" href="#">Governance & Monitoring </a>
+        <a class="nav-link" data-tab="governance" href="#">Governance & Monitoring </a>
     </li>
     <li class="nav-item">
         <a class="nav-link" data-tab="archiver" href="#">Archiver</a>
     </li>
     <li class="nav-item">
-        <a class="nav-link" data-tab="provisioning" href="#">Provisioning</a>
+        <a class="nav-link active" data-tab="provisioning" href="#">Provisioning</a>
     </li>
 </ul>
 
 <div class="tab-content mt-3">
-    <div class="tab-pane fade show active" id="governance">
+    <div class="tab-pane fade show active" id="provisioning">
         <div class="text-center">
             <div class="modal-body row">
                 <div class="col-md-6">
@@ -70,7 +70,7 @@
     <script>
         // Global state management
         const formStates = {};
-        
+
         function formatCurrency(amount) {
             return `$${parseFloat(amount).toFixed(2)}`;
         }
@@ -92,7 +92,7 @@
                 const value = parseFloat(cell.textContent.replace(/[US$,]/g, '')) || 0;
                 return sum + value;
             }, 0);
-            
+
             const totalElement = document.getElementById('totalCost');
             if (totalElement) {
                 totalElement.textContent = formatCurrency(total);
@@ -135,7 +135,7 @@
             restoreFormState(formId);
 
             const inputs = form.querySelectorAll('input, select');
-            
+
             // Remove existing event listeners and add new ones
             inputs.forEach(input => {
                 input.removeEventListener('change', calculatePrice);
@@ -155,10 +155,10 @@
                 const appCount = parseInt(document.getElementById('appCount')?.value) || 0;
                 const bandwidth = parseInt(document.getElementById('bandwidth')?.value) || 0;
                 const bandwidthUnit = document.getElementById('bandwidthUnit')?.value;
-                
+
                 // Save state after getting values
                 saveFormState('staticWebAppForm');
-                
+
                 // Rest of your calculation logic
                 const bandwidthInGB = bandwidthUnit === 'TB' ? bandwidth * 1024 : bandwidth;
                 const appCost = tier === 'free' ? 0 : appCount * 9;
@@ -166,14 +166,14 @@
                 if (tier === 'standard' && bandwidthInGB > 100) {
                     bandwidthCost = (bandwidthInGB - 100) * 0.20;
                 }
-                
+
                 const total = appCost + bandwidthCost;
-                
+
                 // Update displays
                 if (document.getElementById('appCost')) document.getElementById('appCost').textContent = formatCurrency(appCost);
                 if (document.getElementById('bandwidthCost')) document.getElementById('bandwidthCost').textContent = formatCurrency(bandwidthCost);
                 if (document.getElementById('totalCost')) document.getElementById('totalCost').textContent = formatCurrency(total);
-                
+
                 updateTableCosts('StaticWebApp', total);
             };
 
@@ -189,36 +189,36 @@
                 const outboundData = parseInt(document.getElementById('outboundData')?.value) || 0;
                 const outboundDataUnit = document.getElementById('outboundDataUnit')?.value;
                 const timeUnit = document.getElementById('timeUnit')?.value;
-                
+
                 // Save state after getting values
                 saveFormState('appGatewayForm');
-                
+
                 // Rest of your calculation logic
                 const dataProcessedInGB = dataProcessedUnit === 'TB' ? dataProcessed * 1024 : dataProcessed;
                 const outboundDataInGB = outboundDataUnit === 'TB' ? outboundData * 1024 : outboundData;
-                
+
                 let totalHours = hours;
                 switch(timeUnit) {
                     case 'days': totalHours = hours * 24; break;
                     case 'month': totalHours = hours * 730; break;
                 }
-                
+
                 const hourlyRate = 0.095;
                 const dataProcessingRate = 0.016;
                 const outboundDataRate = 0.087;
-                
+
                 const gatewayCost = instances * totalHours * hourlyRate;
                 const dataProcessingCost = dataProcessedInGB * dataProcessingRate;
                 const outboundCost = outboundDataInGB * outboundDataRate;
                 const totalMonthlyCost = gatewayCost + dataProcessingCost + outboundCost;
-                
+
                 // Update displays
                 if (document.getElementById('gatewayHoursCost')) document.getElementById('gatewayHoursCost').textContent = formatCurrency(gatewayCost);
                 if (document.getElementById('dataProcessedCost')) document.getElementById('dataProcessedCost').textContent = formatCurrency(dataProcessingCost);
                 if (document.getElementById('outboundDataCost')) document.getElementById('outboundDataCost').textContent = formatCurrency(outboundCost);
                 if (document.getElementById('upfrontCost')) document.getElementById('upfrontCost').textContent = formatCurrency(0);
                 if (document.getElementById('monthlyCost')) document.getElementById('monthlyCost').textContent = formatCurrency(totalMonthlyCost);
-                
+
                 updateTableCosts('ApplicationGateway', totalMonthlyCost);
             };
 
@@ -230,7 +230,7 @@
             // Tab handling
             const tabLinks = document.querySelectorAll('#systemTypeTabs .nav-link');
             tabLinks.forEach(link => {
-                link.addEventListener('click', function(e) {                    
+                link.addEventListener('click', function(e) {
                     e.preventDefault();
                     tabLinks.forEach(tab => tab.classList.remove('active'));
                     document.querySelectorAll('.tab-pane').forEach(pane => pane.classList.remove('show', 'active'));
@@ -253,14 +253,14 @@
                     try {
                         const response = await fetch(`?handler=LoadPartial&partialName=${partialName}`);
                         if (!response.ok) throw new Error(`HTTP error! status: ${response.status}`);
-                        
+
                         const html = await response.text();
                         rightColumn.innerHTML = html;
 
                         // Initialize the appropriate form based on the partial
                         switch(partialName) {
                             case 'StaticWebApp':
-                                initializeStaticWebAppForm();
+                                initializeIndexForm();
                                 break;
                             case 'ApplicationGateway':
                                 initializeApplicationGatewayForm();
@@ -278,3 +278,4 @@
         });
     </script>
 }
+

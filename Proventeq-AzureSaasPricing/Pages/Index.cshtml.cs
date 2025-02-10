@@ -23,7 +23,7 @@ namespace Proventeq_AzureSaasPricing.Pages
             {
                 "StaticWebApp" => Partial("Partials/StaticWebApp"),
                 "ApplicationGateway" => Partial("Partials/ApplicationGateway"),
-                "ResourcePricing" => Partial("Partials/ResourcePricing"),
+                "ApplicationInsights" => Partial("Partials/ApplicationInsights"),
                 _ => NotFound()
             };
         }
